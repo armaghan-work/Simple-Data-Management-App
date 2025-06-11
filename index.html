@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
+            margin-left: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .servers-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .servers-title {
+            font-size: 1.8rem;
+            color: #4a5568;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .server-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .server-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .server-card.editing {
+            border-color: #48bb78;
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .server-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 0;
+        }
+
+        .delete-btn {
+            background: #f56565;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-btn:hover {
+            background: #e53e3e;
+            transform: scale(1.1);
+        }
+
+        .server-info {
+            display: grid;
+            gap: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            min-width: 120px;
+            margin-right: 10px;
+        }
+
+        .info-value {
+            color: #2d3748;
+            flex: 1;
+            word-break: break-all;
+        }
+        
+        .version-info {
+            color: #a0aec0 !important;
+            font-size: 12px;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .success {
+            background: #c6f6d5;
+            color: #2f855a;
+            border: 2px solid #9ae6b4;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            border: 2px solid #feb2b2;
+        }
+
+        .no-servers {
+            text-align: center;
+            color: #a0aec0;
+            font-size: 18px;
+            padding: 40px;
+            background: #f8fafc;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .editing-indicator {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #48bb78;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .search-container {
+                max-width: none;
+                margin-left: 0;
+            }
+            
+            .servers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="mainTitle">Data Management System</h1>
+        
+        <div class="form-section">
+            <div class="form-header">
+                <h2 class="form-title" id="formTitle">Add New Entry</h2>
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-box" id="searchBox" placeholder="Search entries...">
+                </div>
+            </div>
+
+            <form id="serverForm">
+                <!-- Form will be generated dynamically -->
+            </form>
+
+            <div id="statusMessage"></div>
+        </div>
+
+        <div class="servers-section">
+            <h2 class="servers-title" id="recordsTitle">Data Records</h2>
+            <div class="servers-grid" id="serversGrid">
+                <!-- Server cards will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let servers = [];
+        let editingIndex = -1;
+        
+        // ===============================================
+        // CONFIGURATION SECTION - MODIFY THESE VALUES TO CUSTOMIZE THE APPLICATION
+        // ===============================================
+        
+        // Application Labels - Change these to customize the interface
+        const APP_CONFIG = {
+            mainTitle: 'Data Management System',
+            formTitle: 'Add New Entry',
+            editFormTitle: 'Edit Entry', 
+            recordsTitle: 'Data Records',
+            addButtonText: 'Add Entry',
+            updateButtonText: 'Update Entry',
+            searchPlaceholder: 'Search entries...',
+            noRecordsMessage: 'No entries found. Add your first entry above!',
+            deleteConfirmMessage: 'Are you sure you want to delete this entry? This action cannot be undone.',
+            // File paths for server operations
+            apiBasePath: 'http://localhost/webservers/',
+            // Version for data migration
+            formVersion: '1.0'
+        };
+        
+        // Centralized field configuration - MODIFY THIS TO ADD/REMOVE FIELDS
+        const formFields = [
+            {
+                name: 'serverName',
+                type: 'text',
+                label: 'Server Name',
+                required: true,
+                placeholder: 'Enter server name',
+                grid: true // Shows in main grid
+            },
+            {
+                name: 'responsiblePerson',
+                type: 'text',
+                label: 'Responsible Person',
+                required: false,
+                placeholder: 'Contact person for this server',
+                grid: true
+            },
+            {
+                name: 'internalIP',
+                type: 'text',
+                label: 'Internal IP Address',
+                required: true,
+                placeholder: 'e.g., 192.168.1.100',
+                grid: true
+            },
+            {
+                name: 'externalIP',
+                type: 'text',
+                label: 'External IP Address',
+                required: false,
+                placeholder: 'e.g., 203.0.113.1',
+                grid: true
+            },
+            {
+                name: 'technology',
+                type: 'text',
+                label: 'Technology Stack',
+                required: false,
+                placeholder: 'e.g., Node.js, Apache, MySQL',
+                grid: true
+            },
+            {
+                name: 'workingGroup',
+                type: 'text',
+                label: 'Working Group',
+                required: false,
+                placeholder: 'e.g., DevOps Team',
+                grid: true
+            },
+            {
+                name: 'monitoring',
+                type: 'text',
+                label: 'Monitoring Tools',
+                required: false,
+                placeholder: 'e.g., Nagios, Zabbix',
+                grid: true
+            },
+            {
+                name: 'backup',
+                type: 'text',
+                label: 'Backup Schedule',
+                required: false,
+                placeholder: 'e.g., Daily at 2 AM',
+                grid: true
+            },
+            {
+                name: 'description',
+                type: 'textarea',
+                label: 'Additional Description',
+                required: false,
+                placeholder: 'Additional notes, procedures, or detailed information...',
+                grid: false // Full width field
+            }
+        ];
+        
+        const FORM_VERSION = APP_CONFIG.formVersion; // Version tracking for future migrations
+
+        // Initialize the application
+        function initializeApp() {
+            // Apply configuration to the interface
+            document.getElementById('mainTitle').textContent = APP_CONFIG.mainTitle;
+            document.getElementById('formTitle').textContent = APP_CONFIG.formTitle;
+            document.getElementById('recordsTitle').textContent = APP_CONFIG.recordsTitle;
+            document.getElementById('searchBox').placeholder = APP_CONFIG.searchPlaceholder;
+            
+            generateForm();
+            setupFormEventListener();
+            setupSearchListener();
+            loadServers();
+        }
+
+        // Generate form dynamically
+        function generateForm() {
+            const formContainer = document.getElementById('serverForm');
+            const gridFields = formFields.filter(field => field.grid);
+            const fullWidthFields = formFields.filter(field => !field.grid);
+            
+            let formHTML = '';
+            
+            // Generate grid fields
+            if (gridFields.length > 0) {
+                formHTML += '<div class="form-grid">';
+                gridFields.forEach(field => {
+                    formHTML += generateFieldHTML(field);
+                });
+                formHTML += '</div>';
+            }
+            
+            // Generate full-width fields
+            fullWidthFields.forEach(field => {
+                formHTML += generateFieldHTML(field);
+            });
+            
+            // Add submit button
+            formHTML += `
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="submit" class="submit-btn" id="submitBtn">${APP_CONFIG.addButtonText}</button>
+                </div>
+            `;
+            
+            formContainer.innerHTML = formHTML;
+        }
+        
+        function generateFieldHTML(field) {
+            const requiredAttr = field.required ? 'required' : '';
+            const placeholderAttr = field.placeholder ? `placeholder="${field.placeholder}"` : '';
+            
+            let inputHTML = '';
+            
+            if (field.type === 'textarea') {
+                inputHTML = `<textarea id="${field.name}" name="${field.name}" ${placeholderAttr} ${requiredAttr}></textarea>`;
+            } else {
+                inputHTML = `<input type="${field.type}" id="${field.name}" name="${field.name}" ${placeholderAttr} ${requiredAttr}>`;
+            }
+            
+            return `
+                <div class="form-group">
+                    <label for="${field.name}">${field.label}</label>
+                    ${inputHTML}
+                </div>
+            `;
+        }
+
+        // Setup form event listener after form is generated
+        function setupFormEventListener() {
+            document.getElementById('serverForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(event.target);
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                // Add metadata
+                data.timestamp = new Date().toISOString();
+                data.formVersion = FORM_VERSION;
+                data.id = editingIndex >= 0 ? servers[editingIndex].id : Date.now().toString();
+
+                const url = editingIndex >= 0 ? 'update-data.php' : 'save-data.php';
+                const method = 'POST';
+
+                if (editingIndex >= 0) {
+                    data.index = editingIndex;
+                }
+
+                fetch(`${APP_CONFIG.apiBasePath}${url}`, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.text())
+                .then(result => {
+                    showStatusMessage(result, 'success');
+                    event.target.reset();
+                    loadServers();
+                    resetEditingMode();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showStatusMessage('Error saving data', 'error');
+                });
+            });
+        }
+
+        // Setup search functionality
+        function setupSearchListener() {
+            document.getElementById('searchBox').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterServers(searchTerm);
+            });
+        }
+
+        // Helper function to add new fields (for future use)
+        function addField(fieldConfig) {
+            formFields.push(fieldConfig);
+            generateForm();
+            setupFormEventListener();
+            
+            // Update existing servers with the new field
+            servers = servers.map(server => {
+                if (!server.hasOwnProperty(fieldConfig.name)) {
+                    server[fieldConfig.name] = '';
+                }
+                return server;
+            });
+            
+            displayServers(servers);
+        }
+        
+        // Helper function to remove fields (for future use)
+        function removeField(fieldName) {
+            const fieldIndex = formFields.findIndex(field => field.name === fieldName);
+            if (fieldIndex > -1) {
+                formFields.splice(fieldIndex, 1);
+                generateForm();
+                setupFormEventListener();
+                displayServers(servers);
+            }
+        }
+
+        function migrateServerData(server) {
+            // Add form version if missing (for backward compatibility)
+            if (!server.formVersion) {
+                server.formVersion = '0.9'; // Mark as legacy version
+            }
+            
+            // Add any default values for new fields that don't exist
+            formFields.forEach(field => {
+                if (server[field.name] === undefined) {
+                    server[field.name] = '';
+                }
+            });
+            
+            return server;
+        }
+
+        function loadServers() {
+            fetch(`${APP_CONFIG.apiBasePath}load-data.php`)
+                .then(response => response.json())
+                .then(data => {
+                    servers = (data || []).map(server => migrateServerData(server));
+                    displayServers(servers);
+                })
+                .catch(error => {
+                    console.error('Error loading servers:', error);
+                    servers = [];
+                    displayServers([]);
+                });
+        }
+
+        function displayServers(serversToShow) {
+            const grid = document.getElementById('serversGrid');
+            
+            if (serversToShow.length === 0) {
+                grid.innerHTML = `<div class="no-servers">${APP_CONFIG.noRecordsMessage}</div>`;
+                return;
+            }
+
+            grid.innerHTML = serversToShow.map((server, index) => {
+                const serverIndex = servers.indexOf(server);
+                const isEditing = editingIndex === serverIndex;
+                
+                // Generate info items dynamically based on current form fields
+                const infoItems = formFields
+                    .filter(field => field.name !== 'serverName') // Server name is shown in header
+                    .map(field => {
+                        const value = server[field.name];
+                        if (!value) return '';
+                        
+                        const displayValue = field.type === 'textarea' && value.length > 50 
+                            ? value.substring(0, 50) + '...' 
+                            : value;
+                            
+                        return `
+                            <div class="info-item">
+                                <span class="info-label">${field.label}:</span>
+                                <span class="info-value">${displayValue}</span>
+                            </div>
+                        `;
+                    })
+                    .filter(item => item !== '')
+                    .join('');
+                
+                return `
+                    <div class="server-card ${isEditing ? 'editing' : ''}" onclick="editServer(${serverIndex})">
+                        ${isEditing ? '<div class="editing-indicator">Editing</div>' : ''}
+                        <div class="card-header">
+                            <h3 class="server-name">${server.serverName || 'Unnamed Server'}</h3>
+                            <button class="delete-btn" onclick="deleteServer(event, ${serverIndex})">&times;</button>
+                        </div>
+                        <div class="server-info">
+                            ${infoItems}
+                            ${server.formVersion ? `
+                                <div class="info-item">
+                                    <span class="info-label version-info">Version:</span>
+                                    <span class="info-value version-info">${server.formVersion}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterServers(searchTerm) {
+            if (!searchTerm) {
+                displayServers(servers);
+                return;
+            }
+
+            const filtered = servers.filter(server => 
+                Object.values(server).some(value => 
+                    value && value.toString().toLowerCase().includes(searchTerm)
+                )
+            );
+            displayServers(filtered);
+        }
+
+        function editServer(index) {
+            const server = servers[index];
+            editingIndex = index;
+            
+            // Populate form with server data for all defined fields
+            formFields.forEach(field => {
+                const element = document.getElementById(field.name);
+                if (element) {
+                    element.value = server[field.name] || '';
+                }
+            });
+            
+            // Update UI
+            document.getElementById('formTitle').textContent = APP_CONFIG.editFormTitle;
+            document.getElementById('submitBtn').textContent = APP_CONFIG.updateButtonText;
+            
+            // Re-render to show editing state
+            displayServers(servers);
+            
+            // Scroll to form
+            document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetEditingMode() {
+            editingIndex = -1;
+            document.getElementById('formTitle').textContent = APP_CONFIG.formTitle;
+            document.getElementById('submitBtn').textContent = APP_CONFIG.addButtonText;
+            displayServers(servers);
+        }
+
+        function deleteServer(event, index) {
+            event.stopPropagation();
+            
+            if (confirm(APP_CONFIG.deleteConfirmMessage)) {
+                fetch(`${APP_CONFIG.apiBasePath}delete-data.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ index: index }),
+                })
+                .then(response => response.text())
+                .then(result => {
+                    showStatusMessage(result, 'success');
+                    loadServers();
+                    if (editingIndex === index) {
+                        resetEditingMode();
+                        document.getElementById('serverForm').reset();
+                    } else if (editingIndex > index) {
+                        editingIndex--;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showStatusMessage('Error deleting server', 'error');
+                });
+            }
+        }
+
+        function showStatusMessage(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.innerHTML = `<div class="status-message ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
